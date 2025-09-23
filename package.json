@@ -7,7 +7,10 @@
     "url": "https://github.com/Maiamon/newsletter_backend/issues"
   },
   "imports": {
-        "#@/*": "./src/*"
+    "#@/*": "./src/*"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.ts"
   },
   "repository": {
     "type": "git",
@@ -25,6 +28,7 @@
     "lint:fix": "eslint . --ext .ts,.js,.mts,.cts --fix"
   },
   "dependencies": {
+    "@prisma/client": "6.16.2",
     "dotenv": "17.2.2",
     "fastify": "5.6.0",
     "zod": "4.1.11"
@@ -37,6 +41,7 @@
     "eslint": "9.36.0",
     "globals": "16.4.0",
     "jiti": "2.5.1",
+    "prisma": "6.16.2",
     "tsup": "8.5.0",
     "tsx": "4.20.5",
     "typescript": "5.9.2",

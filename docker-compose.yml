@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: bitnami/postgresql:15
+    container_name: newsletter_postgres
+    environment:
+      - POSTGRESQL_USERNAME=newsletter
+      - POSTGRESQL_PASSWORD=newsletter123
+      - POSTGRESQL_DATABASE=newsletter_db
+    ports:
+      - "5432:5432"
