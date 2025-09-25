@@ -5,6 +5,14 @@ import markdown from "@eslint/markdown";
 import { defineConfig } from "eslint/config";
 
 export default defineConfig([
+  {
+    ignores: [
+      "node_modules/",
+      "build/",
+      "src/generated/",
+      "dist/"
+    ]
+  },
   { files: ["**/*.{js,mjs,cjs,ts,mts,cts}"], languageOptions: { globals: {...globals.browser, ...globals.node} } },
   tseslint.configs.recommended,
   { files: ["**/*.jsonc"], plugins: { json }, language: "json/jsonc" },
