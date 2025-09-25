@@ -1,6 +1,7 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
-import { prisma } from "#lib/prisma.ts";
+import { SearchNewsUseCase } from "#src/use-cases/search_news_with_categories.ts";
+import { PrismaNewsRepository } from "#src/repositories/prisma/prisma_news_repository.ts";
 
 // Schema para validar query parameters
 const searchNewsQuerySchema = z.object({
@@ -15,103 +16,19 @@ export async function searchNews(request: FastifyRequest, reply: FastifyReply) {
     // Validar query parameters
     const { page, limit, period, category } = searchNewsQuerySchema.parse(request.query);
 
-    // Calcular offset para paginação
-    const skip = (page - 1) * limit;
+    // Instanciar repositório e use case
+    const newsRepository = new PrismaNewsRepository();
+    const searchNewsUseCase = new SearchNewsUseCase(newsRepository);
 
-    // Construir filtros de data baseado no período
-    let dateFilter = {};
-    if (period) {
-      const now = new Date();
-      let startDate: Date;
-
-      switch (period) {
-        case 'day':
-          // Início do dia atual (00:00:00)
-          startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-          break;
-        case 'week':
-          // Início da semana atual (domingo)
-          const dayOfWeek = now.getDay();
-          startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - dayOfWeek);
-          break;
-        case 'month':
-          // Início do mês atual
-          startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-          break;
-      }
-
-      dateFilter = {
-        publishedAt: {
-          gte: startDate,
-          lte: now
-        }
-      };
-    }
-
-    // Construir filtro de categoria
-    let categoryFilter = {};
-    if (category) {
-      categoryFilter = {
-        categories: {
-          some: {
-            name: {
-              contains: category,
-              mode: 'insensitive'
-            }
-          }
-        }
-      };
-    }
-
-    // Combinar todos os filtros
-    const whereClause = {
-      ...dateFilter,
-      ...categoryFilter
-    };
-
-    // Buscar notícias com paginação e filtros
-    const [news, totalCount] = await Promise.all([
-      prisma.news.findMany({
-        where: whereClause,
-        include: {
-          categories: {
-            select: {
-              id: true,
-              name: true
-            }
-          }
-        },
-        orderBy: {
-          publishedAt: 'desc'
-        },
-        skip,
-        take: limit
-      }),
-      prisma.news.count({
-        where: whereClause
-      })
-    ]);
-
-    // Calcular informações de paginação
-    const totalPages = Math.ceil(totalCount / limit);
-    const hasNextPage = page < totalPages;
-    const hasPreviousPage = page > 1;
-
-    return reply.status(200).send({
-      news,
-      pagination: {
-        currentPage: page,
-        totalPages,
-        totalCount,
-        limit,
-        hasNextPage,
-        hasPreviousPage
-      },
-      filters: {
-        period: period || null,
-        category: category || null
-      }
+    // Executar use case
+    const result = await searchNewsUseCase.execute({
+      page,
+      limit,
+      period,
+      category
     });
+
+    return reply.status(200).send(result);
 
   } catch (error) {
     if (error instanceof z.ZodError) {
