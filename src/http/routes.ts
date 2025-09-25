@@ -1,15 +1,15 @@
 import type { FastifyInstance } from "fastify";
-import { registerNews } from "./controllers/register_news.controller.ts";
-import { registerUser } from "./controllers/register_users.controller.ts";
-import { searchNews } from "./controllers/search_news.controller.ts";
-import { authenticateUser } from "./controllers/authenticate_user.controller.ts";
+import { registerNews } from "./controllers/register_news.controller";
+import { registerUser } from "./controllers/register_users.controller";
+import { searchNews } from "./controllers/search_news.controller";
+import { authenticateUser } from "./controllers/authenticate_user.controller";
 
 export async function appRoutes(app: FastifyInstance) {
 
   // TODO: Levar essa rota para o agente curador e tirar do backend
   app.post('/news', registerNews);
 
-    app.get('/news', searchNews);
+  app.get('/news', searchNews);
 
   app.post('/users', registerUser);
 

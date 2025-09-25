@@ -1,8 +1,8 @@
-import z from "zod";
-import { comparePasswords } from "#lib/bcrypt.ts";
-import { generateJWT } from "#lib/jwt.ts";
-import { prisma } from "#lib/prisma.ts";
+import { z } from "zod";
 import type { FastifyReply, FastifyRequest } from "fastify";
+import { AuthenticateUseCase } from "#use-cases/authenticate_user.ts";
+import { PrismaUsersRepository } from "#src/repositories/prisma/prisma_users_repository.ts";
+import { InvalidCredentialsError } from "../../use-cases/errors/invalid_credentials";
 
 export async function authenticateUser(request: FastifyRequest, reply: FastifyReply) {
   const loginBodySchema = z.object({
@@ -12,16 +12,21 @@ export async function authenticateUser(request: FastifyRequest, reply: FastifyRe
 
   const { email, password } = loginBodySchema.parse(request.body);
 
-  const user = await prisma.user.findUnique({
-    where: { email }
-  });
+  try {
+    const usersRepository = new PrismaUsersRepository();
+    const authenticateUseCase = new AuthenticateUseCase(usersRepository);
 
-  if (!user || !(await comparePasswords(password, user.password_hash))) {
-    return reply.status(401).send({ message: "Invalid email or password" });
+    const { token } = await authenticateUseCase.execute({
+      email,
+      password
+    });
+
+    return reply.status(200).send({ token });
+  } catch (err) {
+    if (err instanceof InvalidCredentialsError) {
+      return reply.status(401).send({ message: err.message });
+    }
+
+    throw err;
   }
-
-  const token = await generateJWT(
-    { userId: user.id, email: user.email }
-  );
-  return reply.status(200).send({ token });
 }
