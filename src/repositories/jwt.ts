@@ -61,24 +61,20 @@ export async function verifyJWT(token: string): Promise<jose.JWTPayload> {
     const { payload } = await jose.jwtVerify(token, SECRET_KEY);
     return payload;
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
     const errorCode = error instanceof Error && 'code' in error ? error.code : '';
     
     // Verificar se é erro de token expirado
-    if (errorCode === 'ERR_JWT_EXPIRED' || errorMessage.includes('expired')) {
+    if (errorCode === 'ERR_JWT_EXPIRED') {
       throw new TokenExpiredError();
     }
     
     // Verificar se é erro de assinatura inválida
-    if (errorCode === 'ERR_JWS_SIGNATURE_VERIFICATION_FAILED' || 
-        errorMessage.includes('signature verification failed')) {
+    if (errorCode === 'ERR_JWS_SIGNATURE_VERIFICATION_FAILED') {
       throw new InvalidTokenError();
     }
     
-    // Verificar se é erro de formato/estrutura
-    if (errorCode === 'ERR_JWT_MALFORMED' || 
-        errorMessage.includes('malformed') ||
-        errorMessage.includes('invalid')) {
+    // Verificar se é erro de formato/estrutura (inclui tokens malformados, vazios, etc.)
+    if (errorCode === 'ERR_JWS_INVALID') {
       throw new TokenMalformedError();
     }
     
