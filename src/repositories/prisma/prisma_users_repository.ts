@@ -5,7 +5,7 @@ export class PrismaUsersRepository implements UsersRepository {
   async findByEmail(email: string): Promise<UserData | null> {
     const user = await prisma.user.findUnique({
       where: { 
-        email 
+        email: email.toLowerCase() // Buscar sempre em lowercase
       }
     });
 
@@ -14,7 +14,10 @@ export class PrismaUsersRepository implements UsersRepository {
   
   async create(data: CreateUserData): Promise<UserData> {
     const user = await prisma.user.create({
-      data,
+      data: {
+        ...data,
+        email: data.email.toLowerCase() // Salvar sempre em lowercase
+      },
     });
 
     return user;

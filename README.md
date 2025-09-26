@@ -20,7 +20,7 @@ O backend de um Newsletter inteligente
 
 - Similarmente decidi usar a biblioteca bcryptjs ao invés da bcrypt, por não ter dependencias de pacotes.
 
-- Usei padrões SOLID, Use Case
+- Usei padrões SOLID, Use Case, in memory test
 
 ### Backend que serve as notícias
 

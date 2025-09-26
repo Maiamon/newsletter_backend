@@ -3,3 +3,4 @@ build
 .env
 .vscode
 /src/generated/prisma
+coverage

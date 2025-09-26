@@ -1,14 +1,14 @@
 export interface UserData {
   id: string;
   email: string;
-  name: string | null;
+  name: string;
   password_hash: string;
   createdAt: Date;
 }
 
 export interface CreateUserData {
   email: string;
-  name?: string;
+  name: string;
   password_hash: string;
 }
 

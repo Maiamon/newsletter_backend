@@ -10,7 +10,8 @@ export default defineConfig([
       "node_modules/",
       "build/",
       "src/generated/",
-      "dist/"
+      "dist/",
+      "coverage/",
     ]
   },
   { files: ["**/*.{js,mjs,cjs,ts,mts,cts}"], languageOptions: { globals: {...globals.browser, ...globals.node} } },
