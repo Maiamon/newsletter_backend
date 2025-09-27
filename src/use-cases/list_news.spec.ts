@@ -1,5 +1,5 @@
 import { describe, expect, it, beforeEach } from 'vitest';
-import { SearchNewsUseCase } from './search_news_with_categories';
+import { SearchNewsUseCase } from './list_news';
 import { InMemoryNewsRepository } from '../repositories/in-memory/in-memory-news-repository';
 
 describe('Search News Use Case', () => {
@@ -14,7 +14,7 @@ describe('Search News Use Case', () => {
   it('should return paginated news results', async () => {
     // Arrange - Criar 5 notícias de teste
     for (let i = 1; i <= 5; i++) {
-      await newsRepository.createWithCategories({
+      await newsRepository.create({
         title: `News ${i}`,
         content: `Content for news ${i}`,
         summary: `Summary ${i}`,
@@ -42,14 +42,14 @@ describe('Search News Use Case', () => {
 
   it('should return news ordered by publication date descending', async () => {
     // Arrange - Criar notícias com datas diferentes
-    await newsRepository.createWithCategories({
+    await newsRepository.create({
       title: 'Older News',
       content: 'Older content',
       publishedAt: new Date('2024-01-01'),
       categories: [{ id: 1, name: 'Technology' }]
     });
 
-    await newsRepository.createWithCategories({
+    await newsRepository.create({
       title: 'Newer News',
       content: 'Newer content',
       publishedAt: new Date('2024-12-01'),
@@ -69,21 +69,21 @@ describe('Search News Use Case', () => {
 
   it('should filter news by category', async () => {
     // Arrange - Criar notícias com diferentes categorias e datas específicas
-    await newsRepository.createWithCategories({
+    await newsRepository.create({
       title: 'Tech News',
       content: 'Tech content',
       publishedAt: new Date('2024-01-01'),
       categories: [{ id: 1, name: 'Technology' }]
     });
 
-    await newsRepository.createWithCategories({
+    await newsRepository.create({
       title: 'Sports News',
       content: 'Sports content',
       publishedAt: new Date('2024-01-02'),
       categories: [{ id: 2, name: 'Sports' }]
     });
 
-    await newsRepository.createWithCategories({
+    await newsRepository.create({
       title: 'Mixed News',
       content: 'Mixed content',
       publishedAt: new Date('2024-01-03'), // Mais recente
@@ -104,7 +104,6 @@ describe('Search News Use Case', () => {
     expect(result.news).toHaveLength(2);
     expect(result.news[0].title).toBe('Mixed News'); // Mais recente primeiro
     expect(result.news[1].title).toBe('Tech News');
-    expect(result.filters.category).toBe('Technology');
   });
 
   it('should filter news by period - day', async () => {
@@ -113,14 +112,14 @@ describe('Search News Use Case', () => {
     const yesterday = new Date(now.getTime() - 25 * 60 * 60 * 1000); // 25 horas atrás
     const today = new Date(now.getTime() - 12 * 60 * 60 * 1000); // 12 horas atrás
 
-    await newsRepository.createWithCategories({
+    await newsRepository.create({
       title: 'Yesterday News',
       content: 'Yesterday content',
       publishedAt: yesterday,
       categories: [{ id: 1, name: 'Technology' }]
     });
 
-    await newsRepository.createWithCategories({
+    await newsRepository.create({
       title: 'Today News',
       content: 'Today content',
       publishedAt: today,
@@ -137,7 +136,6 @@ describe('Search News Use Case', () => {
     // Assert
     expect(result.news).toHaveLength(1);
     expect(result.news[0].title).toBe('Today News');
-    expect(result.filters.period).toBe('day');
   });
 
   it('should filter news by period - week', async () => {
@@ -146,14 +144,14 @@ describe('Search News Use Case', () => {
     const lastWeek = new Date(now.getTime() - 8 * 24 * 60 * 60 * 1000); // 8 dias atrás
     const thisWeek = new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000); // 3 dias atrás
 
-    await newsRepository.createWithCategories({
+    await newsRepository.create({
       title: 'Last Week News',
       content: 'Last week content',
       publishedAt: lastWeek,
       categories: [{ id: 1, name: 'Technology' }]
     });
 
-    await newsRepository.createWithCategories({
+    await newsRepository.create({
       title: 'This Week News',
       content: 'This week content',
       publishedAt: thisWeek,
@@ -170,7 +168,6 @@ describe('Search News Use Case', () => {
     // Assert
     expect(result.news).toHaveLength(1);
     expect(result.news[0].title).toBe('This Week News');
-    expect(result.filters.period).toBe('week');
   });
 
   it('should filter news by period - month', async () => {
@@ -179,14 +176,14 @@ describe('Search News Use Case', () => {
     const lastMonth = new Date(now.getTime() - 32 * 24 * 60 * 60 * 1000); // 32 dias atrás
     const thisMonth = new Date(now.getTime() - 15 * 24 * 60 * 60 * 1000); // 15 dias atrás
 
-    await newsRepository.createWithCategories({
+    await newsRepository.create({
       title: 'Last Month News',
       content: 'Last month content',
       publishedAt: lastMonth,
       categories: [{ id: 1, name: 'Technology' }]
     });
 
-    await newsRepository.createWithCategories({
+    await newsRepository.create({
       title: 'This Month News',
       content: 'This month content',
       publishedAt: thisMonth,
@@ -203,7 +200,6 @@ describe('Search News Use Case', () => {
     // Assert
     expect(result.news).toHaveLength(1);
     expect(result.news[0].title).toBe('This Month News');
-    expect(result.filters.period).toBe('month');
   });
 
   it('should combine category and period filters', async () => {
@@ -213,7 +209,7 @@ describe('Search News Use Case', () => {
     const yesterday = new Date(now.getTime() - 25 * 60 * 60 * 1000); // 25 horas atrás
 
     // Notícia de hoje, categoria Technology
-    await newsRepository.createWithCategories({
+    await newsRepository.create({
       title: 'Today Tech News',
       content: 'Today tech content',
       publishedAt: today,
@@ -221,7 +217,7 @@ describe('Search News Use Case', () => {
     });
 
     // Notícia de hoje, categoria Sports
-    await newsRepository.createWithCategories({
+    await newsRepository.create({
       title: 'Today Sports News',
       content: 'Today sports content',
       publishedAt: today,
@@ -229,7 +225,7 @@ describe('Search News Use Case', () => {
     });
 
     // Notícia de ontem, categoria Technology
-    await newsRepository.createWithCategories({
+    await newsRepository.create({
       title: 'Yesterday Tech News',
       content: 'Yesterday tech content',
       publishedAt: yesterday,
@@ -247,14 +243,12 @@ describe('Search News Use Case', () => {
     // Assert
     expect(result.news).toHaveLength(1);
     expect(result.news[0].title).toBe('Today Tech News');
-    expect(result.filters.period).toBe('day');
-    expect(result.filters.category).toBe('Technology');
   });
 
   it('should return correct pagination for second page', async () => {
     // Arrange - Criar 5 notícias
     for (let i = 1; i <= 5; i++) {
-      await newsRepository.createWithCategories({
+      await newsRepository.create({
         title: `News ${i}`,
         content: `Content ${i}`,
         publishedAt: new Date(Date.now() - i * 60 * 60 * 1000), // i horas atrás
@@ -279,9 +273,10 @@ describe('Search News Use Case', () => {
 
   it('should return empty results when no news match criteria', async () => {
     // Arrange
-    await newsRepository.createWithCategories({
+    await newsRepository.create({
       title: 'Tech News',
       content: 'Tech content',
+      publishedAt: new Date('2024-01-01'),
       categories: [{ id: 1, name: 'Technology' }]
     });
 
@@ -302,9 +297,10 @@ describe('Search News Use Case', () => {
 
   it('should include news categories in the response', async () => {
     // Arrange
-    await newsRepository.createWithCategories({
+    await newsRepository.create({
       title: 'Multi Category News',
       content: 'Multi category content',
+      publishedAt: new Date('2024-01-01'),
       categories: [
         { id: 1, name: 'Technology' },
         { id: 2, name: 'Business' },
@@ -333,7 +329,7 @@ describe('Search News Use Case', () => {
   it('should return news with all expected fields', async () => {
     // Arrange
     const testDate = new Date('2024-01-15T10:30:00Z');
-    await newsRepository.createWithCategories({
+    await newsRepository.create({
       title: 'Complete News',
       content: 'Complete news content',
       summary: 'News summary',

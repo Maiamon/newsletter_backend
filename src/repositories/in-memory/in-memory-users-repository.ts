@@ -1,10 +1,11 @@
-import { UsersRepository, UserData, CreateUserData } from "../users_repository.ts";
+import { User } from "../../entities/user_entity.ts";
+import { UsersRepository, CreateUserData } from "../users_repository.ts";
 import { randomUUID } from "crypto";
 
 export class InMemoryUsersRepository implements UsersRepository {
-  public items: UserData[] = [];
+  public items: User[] = [];
 
-  async findByEmail(email: string): Promise<UserData | null> {
+  async findByEmail(email: string): Promise<User | null> {
     const user = this.items.find((item) => item.email.toLowerCase() === email.toLowerCase());
 
     if (!user) {
@@ -14,8 +15,8 @@ export class InMemoryUsersRepository implements UsersRepository {
     return user;
   }
 
-  async create(data: CreateUserData): Promise<UserData> {
-    const user: UserData = {
+  async create(data: CreateUserData): Promise<User> {
+    const user: User = {
       id: randomUUID(),
       name: data.name ?? null,
       email: data.email.toLowerCase(), // Normalizar email para lowercase
@@ -29,23 +30,3 @@ export class InMemoryUsersRepository implements UsersRepository {
   }
 
 }
-
-// export class PrismaUsersRepository implements UsersRepository {
-//   async findByEmail(email: string): Promise<UserData | null> {
-//     const user = await prisma.user.findUnique({
-//       where: { 
-//         email 
-//       }
-//     });
-
-//     return user;
-//   }
-  
-//   async create(data: CreateUserData): Promise<UserData> {
-//     const user = await prisma.user.create({
-//       data,
-//     });
-
-//     return user;
-//   }
-// }

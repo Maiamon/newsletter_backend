@@ -1,9 +1,40 @@
 import { prisma } from "#lib/prisma.ts";
-import { Prisma, News } from "../../generated/prisma/index.js";
-import { NewsRepository, SearchNewsParams, SearchNewsResult } from "../news_repository.ts";
+import { News } from "../../entities/news_entity.ts";
+import { NewsRepository, SearchNewsParams, NewsList } from "../news_repository.ts";
 
 export class PrismaNewsRepository implements NewsRepository {
-  async searchNews(params: SearchNewsParams): Promise<SearchNewsResult> {
+  async findById(id: number): Promise<News | null> {
+    const news = await prisma.news.findUnique({
+      where: { id },
+      include: {
+        categories: {
+          select: {
+            id: true,
+            name: true
+          }
+        }
+      }
+    });
+
+    if (!news) {
+      return null;
+    }
+
+    return {
+      id: news.id,
+      title: news.title,
+      content: news.content,
+      source: news.source ?? undefined,
+      summary: news.summary ?? undefined,
+      publishedAt: new Date(news.publishedAt),
+      categories: news.categories.map(category => ({
+        id: category.id,
+        name: category.name
+      }))
+    };
+  }
+
+  async findMany(params: SearchNewsParams): Promise<NewsList> {
     const { page, limit, period, category } = params;
     
     // Calcular offset para paginação
@@ -84,19 +115,19 @@ export class PrismaNewsRepository implements NewsRepository {
     ]);
 
     return {
-      news,
+      news: news.map(n => ({
+        id: n.id,
+        title: n.title,
+        content: n.content,
+        publishedAt: n.publishedAt,
+        summary: n.summary ?? undefined,
+        source: n.source ?? undefined,
+        categories: n.categories.map(c => ({
+          id: c.id,
+          name: c.name
+        }))
+      })),
       totalCount
     };
-  }
-
-  async create(data: Prisma.NewsCreateInput): Promise<News> {
-    const news = await prisma.news.create({
-      data,
-      include: {
-        categories: true
-      }
-    });
-
-    return news;
   }
 }

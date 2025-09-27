@@ -1,36 +1,15 @@
-import { NewsRepository, SearchNewsParams, SearchNewsResult } from "../news_repository.ts";
-import { News, Prisma } from "../../generated/prisma/index.js";
-
-export interface NewsData {
-  id: number;
-  title: string;
-  summary: string | null;
-  source: string | null;
-  content: string;
-  publishedAt: Date;
-  categories: {
-    id: number;
-    name: string;
-  }[];
-}
-
-export interface CreateNewsData {
-  title: string;
-  summary?: string | null;
-  source?: string | null;
-  content: string;
-  publishedAt?: Date;
-  categories?: {
-    id: number;
-    name: string;
-  }[];
-}
+import { NewsRepository, SearchNewsParams, NewsList } from "../news_repository.ts";
+import { News } from "../../entities/news_entity.ts";
 
 export class InMemoryNewsRepository implements NewsRepository {
-  public items: NewsData[] = [];
+  public items: News[] = [];
   private currentId = 1;
+  async findById(id: number): Promise<News | null> {
+    const news = this.items.find(item => item.id === id);
+    return Promise.resolve(news ? { ...news } : null);
+  }
 
-  async searchNews(params: SearchNewsParams): Promise<SearchNewsResult> {
+  async findMany(params: SearchNewsParams): Promise<NewsList> {
     const { page, limit, period, category } = params;
     
     let filteredNews = [...this.items];
@@ -86,39 +65,12 @@ export class InMemoryNewsRepository implements NewsRepository {
     };
   }
 
-  async create(data: Prisma.NewsCreateInput): Promise<News> {
-    // Para o repositório in-memory, simplificamos o input do Prisma
-    const publishedAt = typeof data.publishedAt === 'string' ? new Date(data.publishedAt) : data.publishedAt || new Date();
-    
-    const news: NewsData = {
+  async create(data: Omit<News, 'id'>): Promise<News> {
+    const news: News = {
       id: this.currentId++,
       title: data.title,
-      summary: data.summary || null,
-      source: data.source || null,
-      content: data.content,
-      publishedAt: publishedAt,
-      categories: [] // Para o método create base, não lidamos com categorias
-    };
-
-    this.items.push(news);
-
-    return {
-      id: news.id,
-      title: news.title,
-      summary: news.summary,
-      source: news.source,
-      content: news.content,
-      publishedAt: news.publishedAt
-    };
-  }
-
-  // Método auxiliar para adicionar notícias com categorias nos testes
-  async createWithCategories(data: CreateNewsData): Promise<NewsData> {
-    const news: NewsData = {
-      id: this.currentId++,
-      title: data.title,
-      summary: data.summary || null,
-      source: data.source || null,
+      summary: data.summary || undefined,
+      source: data.source || undefined,
       content: data.content,
       publishedAt: data.publishedAt || new Date(),
       categories: data.categories || []

@@ -2,8 +2,8 @@ import { describe, expect, it, beforeEach } from 'vitest';
 import { AuthenticateUseCase } from './authenticate_user';
 import { InMemoryUsersRepository } from '../repositories/in-memory/in-memory-users-repository';
 import { TokenExpiredError, InvalidTokenError, TokenMalformedError } from './errors/jwt_errors';
-import { hashPassword } from '../repositories/bcrypt';
-import { verifyJWT } from '../repositories/jwt';
+import { hashPassword } from '../service/password_hasher_service';
+import { verifyJWT } from '../service/jwt_service';
 import { env } from '#src/env/index.ts';
 import * as jose from 'jose';
 

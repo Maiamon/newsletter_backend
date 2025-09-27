@@ -1,6 +1,6 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
-import { SearchNewsUseCase } from "#src/use-cases/search_news_with_categories.ts";
+import { SearchNewsUseCase } from "#src/use-cases/list_news.ts";
 import { PrismaNewsRepository } from "#src/repositories/prisma/prisma_news_repository.ts";
 
 // Schema para validar query parameters

@@ -1,10 +1,4 @@
-export interface UserData {
-  id: string;
-  email: string;
-  name: string;
-  password_hash: string;
-  createdAt: Date;
-}
+import { User } from "../entities/user_entity";
 
 export interface CreateUserData {
   email: string;
@@ -13,6 +7,6 @@ export interface CreateUserData {
 }
 
 export interface UsersRepository {
-  findByEmail(email: string): Promise<UserData | null>;
-  create(data: CreateUserData): Promise<UserData>;
+  findByEmail(email: string): Promise<User | null>;
+  create(data: CreateUserData): Promise<User>;
 }

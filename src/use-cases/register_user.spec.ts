@@ -1,6 +1,6 @@
 import { describe, expect, it, beforeEach } from 'vitest'
 import { RegisterUseCase } from './register_user';
-import { comparePasswords } from '../repositories/bcrypt';
+import { comparePasswords } from '../service/password_hasher_service';
 import { InMemoryUsersRepository } from '../repositories/in-memory/in-memory-users-repository';
 import { UserAlreadyExistsError } from './errors/user_already_exists';
 

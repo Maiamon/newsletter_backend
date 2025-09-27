@@ -1,5 +1,5 @@
-import { comparePasswords } from "#repositories/bcrypt.ts";
-import { generateJWT } from "#repositories/jwt.ts";
+import { comparePasswords } from "#src/service/password_hasher_service.ts";
+import { generateJWT } from "#src/service/jwt_service.ts";
 import { UsersRepository } from "#repositories/users_repository.ts";
 import { InvalidCredentialsError } from "./errors/invalid_credentials";
 

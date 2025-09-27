@@ -1,4 +1,4 @@
-import { Prisma, News } from "../generated/prisma/index.js";
+import { News } from "../entities/news_entity";
 
 export interface SearchNewsParams {
   page: number;
@@ -6,18 +6,12 @@ export interface SearchNewsParams {
   period?: 'day' | 'week' | 'month';
   category?: string;
 }
-
-export interface SearchNewsResult {
-  news: (News & {
-    categories: {
-      id: number;
-      name: string;
-    }[];
-  })[];
+export interface NewsList {
+  news: News[];
   totalCount: number;
 }
 
 export interface NewsRepository {
-  searchNews(params: SearchNewsParams): Promise<SearchNewsResult>
-  create(data: Prisma.NewsCreateInput): Promise<News>
+  findById(id: number): Promise<News | null>;
+  findMany(params: SearchNewsParams): Promise<NewsList>
 }

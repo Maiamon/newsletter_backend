@@ -2,7 +2,7 @@ import { describe, expect, it, beforeEach } from 'vitest';
 import { AuthenticateUseCase } from './authenticate_user';
 import { InMemoryUsersRepository } from '../repositories/in-memory/in-memory-users-repository';
 import { InvalidCredentialsError } from './errors/invalid_credentials';
-import { hashPassword } from '../repositories/bcrypt';
+import { hashPassword } from '../service/password_hasher_service';
 
 describe('Authenticate Use Case', () => {
   let usersRepository: InMemoryUsersRepository;

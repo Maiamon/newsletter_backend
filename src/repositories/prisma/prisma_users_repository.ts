@@ -1,8 +1,9 @@
 import { prisma } from "#lib/prisma.ts";
-import { UsersRepository, UserData, CreateUserData } from "../users_repository.ts";
+import { User } from "../../entities/user_entity.ts";
+import { UsersRepository, CreateUserData } from "../users_repository.ts";
 
 export class PrismaUsersRepository implements UsersRepository {
-  async findByEmail(email: string): Promise<UserData | null> {
+  async findByEmail(email: string): Promise<User | null> {
     const user = await prisma.user.findUnique({
       where: { 
         email: email.toLowerCase() // Buscar sempre em lowercase
@@ -12,7 +13,7 @@ export class PrismaUsersRepository implements UsersRepository {
     return user;
   }
   
-  async create(data: CreateUserData): Promise<UserData> {
+  async create(data: CreateUserData): Promise<User> {
     const user = await prisma.user.create({
       data: {
         ...data,

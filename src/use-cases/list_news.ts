@@ -1,4 +1,5 @@
-import { NewsRepository, SearchNewsParams } from "#repositories/news_repository.ts";
+import { NewsRepository, SearchNewsParams } from "#src/repositories/news_repository.ts";
+import { News } from "../entities/news_entity";
 
 interface SearchNewsUseCaseParams {
   page: number;
@@ -7,21 +8,8 @@ interface SearchNewsUseCaseParams {
   category?: string;
 }
 
-interface NewsWithCategories {
-  id: number;
-  title: string;
-  summary: string | null;
-  source: string | null;
-  content: string;
-  publishedAt: Date;
-  categories: {
-    id: number;
-    name: string;
-  }[];
-}
-
 interface SearchNewsUseCaseResult {
-  news: NewsWithCategories[];
+  news: News[];
   pagination: {
     currentPage: number;
     totalPages: number;
@@ -29,10 +17,6 @@ interface SearchNewsUseCaseResult {
     limit: number;
     hasNextPage: boolean;
     hasPreviousPage: boolean;
-  };
-  filters: {
-    period: string | null;
-    category: string | null;
   };
 }
 
@@ -49,7 +33,7 @@ export class SearchNewsUseCase {
       category
     };
 
-    const result = await this.newsRepository.searchNews(searchParams);
+    const result = await this.newsRepository.findMany(searchParams);
 
     // Calcular informações de paginação
     const totalPages = Math.ceil(result.totalCount / limit);
@@ -66,10 +50,6 @@ export class SearchNewsUseCase {
         hasNextPage,
         hasPreviousPage
       },
-      filters: {
-        period: period || null,
-        category: category || null
-      }
     };
   }
 }

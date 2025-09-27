@@ -1,4 +1,4 @@
-import { hashPassword } from "#repositories/bcrypt.ts";
+import { hashPassword } from "#src/service/password_hasher_service.ts";
 import { UsersRepository } from "#repositories/users_repository.ts";
 import { UserAlreadyExistsError } from "./errors/user_already_exists.ts";
 import { User } from "../generated/prisma/index";
@@ -21,14 +21,14 @@ export class RegisterUseCase {
   }
 
   async execute({ email, name, password }: RegisterUseCaseProps): Promise<RegisterUseCaseResponse> {
-    const password_hash = await hashPassword(password);
-
     // Verifica se o usuário já existe
     const existingUser = await this.usersRepository.findByEmail(email);
 
     if (existingUser) {
       throw new UserAlreadyExistsError();
     }
+
+    const password_hash = await hashPassword(password);
 
     const user = await this.usersRepository.create({
       email,
