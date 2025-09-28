@@ -4,7 +4,7 @@ import { News } from "../entities/news_entity";
 interface SearchNewsUseCaseParams {
   page: number;
   limit: number;
-  period?: 'day' | 'week' | 'month';
+  period?: 'day' | 'week' | 'month'; // day: últimas 24h, week: últimos 7 dias, month: últimos 30 dias
   category?: string;
 }
 

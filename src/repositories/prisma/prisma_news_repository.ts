@@ -40,7 +40,7 @@ export class PrismaNewsRepository implements NewsRepository {
     // Calcular offset para paginação
     const skip = (page - 1) * limit;
 
-    // Construir filtros de data baseado no período
+    // Construir filtros de data baseado no período (últimos N dias/horas)
     let dateFilter = {};
     if (period) {
       const now = new Date();
@@ -48,17 +48,16 @@ export class PrismaNewsRepository implements NewsRepository {
 
       switch (period) {
         case 'day':
-          // Início do dia atual (00:00:00)
-          startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+          // Últimas 24 horas (não apenas hoje)
+          startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
           break;
         case 'week':
-          // Início da semana atual (domingo)
-          const dayOfWeek = now.getDay();
-          startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - dayOfWeek);
+          // Últimos 7 dias (não apenas esta semana)
+          startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
           break;
         case 'month':
-          // Início do mês atual
-          startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+          // Últimos 30 dias (não apenas este mês)
+          startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
           break;
       }
 
