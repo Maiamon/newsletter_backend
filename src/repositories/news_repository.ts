@@ -11,13 +11,7 @@ export interface NewsList {
   totalCount: number;
 }
 
-export interface Category {
-  id: number;
-  name: string;
-}
-
 export interface NewsRepository {
   findById(id: number): Promise<News | null>;
   findMany(params: SearchNewsParams): Promise<NewsList>;
-  findAllCategories(): Promise<Category[]>;
 }

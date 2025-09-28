@@ -1,4 +1,4 @@
-import { NewsRepository, Category } from "#src/repositories/news_repository.ts";
+import { CategoriesRepository, Category } from "#src/repositories/categories_repository.ts";
 
 interface GetCategoriesUseCaseResult {
   categories: Category[];
@@ -6,10 +6,10 @@ interface GetCategoriesUseCaseResult {
 }
 
 export class GetCategoriesUseCase {
-  constructor(private newsRepository: NewsRepository) {}
+  constructor(private categoriesRepository: CategoriesRepository) {}
 
   async execute(): Promise<GetCategoriesUseCaseResult> {
-    const categories = await this.newsRepository.findAllCategories();
+    const categories = await this.categoriesRepository.findAll();
 
     return {
       categories,

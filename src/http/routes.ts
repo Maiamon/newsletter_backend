@@ -4,6 +4,9 @@ import { searchNews } from "./controllers/search_news.controller";
 import { authenticateUser } from "./controllers/authenticate_user.controller";
 import { getNewsDetail } from "./controllers/get_news_detail.controller";
 import { getCategories } from "./controllers/get_categories.controller";
+import { getPreferences } from "./controllers/get_preferences.controller";
+import { getUserPreferences } from "./controllers/get_user_preferences.controller";
+import { updateUserPreferences } from "./controllers/update_user_preferences.controller";
 import { authMiddleware } from "./middlewares/auth.middleware";
 
 export async function appRoutes(app: FastifyInstance) {
@@ -36,12 +39,21 @@ export async function appRoutes(app: FastifyInstance) {
   app.get('/categories', { preHandler: authMiddleware }, getCategories);
 
   // ========================================
-  // ROTAS FUTURAS (para implementar)
+  // ROTAS DE PREFERÊNCIAS (protegidas)
   // ========================================
   
-  // TODO: Implementar rotas de preferências do usuário
-  // app.get('/user/preferences', { preHandler: authMiddleware }, getUserPreferences);
-  // app.put('/user/preferences', { preHandler: authMiddleware }, updateUserPreferences);
+  // Obter todas as categorias disponíveis para preferências
+  app.get('/preferences', { preHandler: authMiddleware }, getPreferences);
+  
+  // Obter preferências do usuário atual
+  app.get('/users/me/preferences', { preHandler: authMiddleware }, getUserPreferences);
+  
+  // Atualizar preferências do usuário atual
+  app.put('/users/me/preferences', { preHandler: authMiddleware }, updateUserPreferences);
+  
+  // ========================================
+  // ROTAS FUTURAS (para implementar)
+  // ========================================
   
   // TODO: Implementar rotas de perfil do usuário
   // app.get('/user/profile', { preHandler: authMiddleware }, getUserProfile);

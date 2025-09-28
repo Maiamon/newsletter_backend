@@ -1,80 +1,50 @@
 import { describe, expect, it, beforeEach } from 'vitest';
 import { GetCategoriesUseCase } from './get_categories';
-import { InMemoryNewsRepository } from '../repositories/in-memory/in-memory-news-repository';
+import { InMemoryCategoriesRepository } from '../repositories/in-memory/in-memory-categories-repository';
 
 describe('Get Categories Use Case', () => {
-  let newsRepository: InMemoryNewsRepository;
+  let categoriesRepository: InMemoryCategoriesRepository;
   let getCategoriesUseCase: GetCategoriesUseCase;
 
   beforeEach(() => {
-    newsRepository = new InMemoryNewsRepository();
-    getCategoriesUseCase = new GetCategoriesUseCase(newsRepository);
+    categoriesRepository = new InMemoryCategoriesRepository();
+    getCategoriesUseCase = new GetCategoriesUseCase(categoriesRepository);
   });
 
-  it('should return empty categories when no categories exist', async () => {
+  it('should return all predefined categories', async () => {
     // Act
     const result = await getCategoriesUseCase.execute();
 
     // Assert
-    expect(result.categories).toHaveLength(0);
-    expect(result.totalCount).toBe(0);
-  });
-
-  it('should return all categories ordered by name', async () => {
-    // Arrange - Adicionar categorias diretamente
-    newsRepository.addCategory({ id: 1, name: 'Technology' });
-    newsRepository.addCategory({ id: 2, name: 'Innovation' });
-    newsRepository.addCategory({ id: 3, name: 'Sports' });
-
-    // Act
-    const result = await getCategoriesUseCase.execute();
-
-    // Assert
-    expect(result.categories).toHaveLength(3);
-    expect(result.totalCount).toBe(3);
+    expect(result.categories).toHaveLength(5);
+    expect(result.totalCount).toBe(5);
     
-    // Verificar se as categorias estão ordenadas por nome
-    expect(result.categories[0].name).toBe('Innovation');
-    expect(result.categories[1].name).toBe('Sports');
-    expect(result.categories[2].name).toBe('Technology');
-    
-    // Verificar estrutura das categorias
-    expect(result.categories[0]).toEqual({ id: 2, name: 'Innovation' });
-    expect(result.categories[1]).toEqual({ id: 3, name: 'Sports' });
-    expect(result.categories[2]).toEqual({ id: 1, name: 'Technology' });
+    // Verificar se contém as categorias padrão
+    const categoryNames = result.categories.map(cat => cat.name);
+    expect(categoryNames).toContain("Technology");
+    expect(categoryNames).toContain("Sports");
+    expect(categoryNames).toContain("Politics");
+    expect(categoryNames).toContain("Entertainment");
+    expect(categoryNames).toContain("Science");
   });
 
-  it('should return categories independent of news existence', async () => {
-    // Arrange - Adicionar categoria sem criar notícias
-    newsRepository.addCategory({ id: 1, name: 'Technology' });
-
+  it('should return categories with correct structure', async () => {
     // Act
     const result = await getCategoriesUseCase.execute();
 
     // Assert
-    expect(result.categories).toHaveLength(1);
-    expect(result.totalCount).toBe(1);
-    expect(result.categories[0]).toEqual({ id: 1, name: 'Technology' });
+    expect(result.categories[0]).toHaveProperty('id');
+    expect(result.categories[0]).toHaveProperty('name');
+    expect(typeof result.categories[0].id).toBe('number');
+    expect(typeof result.categories[0].name).toBe('string');
   });
 
-  it('should handle multiple categories correctly', async () => {
-    // Arrange - Adicionar várias categorias
-    newsRepository.addCategory({ id: 1, name: 'Technology' });
-    newsRepository.addCategory({ id: 2, name: 'Programming' });
-    newsRepository.addCategory({ id: 3, name: 'AI' });
-    newsRepository.addCategory({ id: 4, name: 'Web Development' });
-
+  it('should return correct total count', async () => {
     // Act
     const result = await getCategoriesUseCase.execute();
 
     // Assert
-    expect(result.categories).toHaveLength(4);
-    expect(result.totalCount).toBe(4);
-    
-    // Verificar ordenação alfabética
-    expect(result.categories[0]).toEqual({ id: 3, name: 'AI' });
-    expect(result.categories[1]).toEqual({ id: 2, name: 'Programming' });
-    expect(result.categories[2]).toEqual({ id: 1, name: 'Technology' });
-    expect(result.categories[3]).toEqual({ id: 4, name: 'Web Development' });
+    expect(result.totalCount).toBe(result.categories.length);
+    expect(result.totalCount).toBe(5);
   });
 });
