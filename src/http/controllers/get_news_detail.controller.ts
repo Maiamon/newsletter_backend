@@ -1,7 +1,6 @@
 import { z } from "zod";
 import type { FastifyReply, FastifyRequest } from "fastify";
-import { GetNewsDetailUseCase } from "#use-cases/get_news_detail.ts";
-import { PrismaNewsRepository } from "#src/repositories/prisma/prisma_news_repository.ts";
+import { UseCaseFactory } from "#src/factories/use-case-factory.ts";
 
 export async function getNewsDetail(request: FastifyRequest, reply: FastifyReply) {
   const getNewsParamsSchema = z.object({
@@ -11,8 +10,7 @@ export async function getNewsDetail(request: FastifyRequest, reply: FastifyReply
   const { id } = getNewsParamsSchema.parse(request.params);
 
   try {
-    const newsRepository = new PrismaNewsRepository();
-    const getNewsDetailUseCase = new GetNewsDetailUseCase(newsRepository);
+    const getNewsDetailUseCase = UseCaseFactory.createGetNewsDetailUseCase();
 
     const news = await getNewsDetailUseCase.execute({ id });
 

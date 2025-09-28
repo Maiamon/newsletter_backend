@@ -1,12 +1,10 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
-import { GetCategoriesUseCase } from "#src/use-cases/get_categories.ts";
-import { PrismaCategoriesRepository } from "#src/repositories/prisma/prisma_categories_repository.ts";
+import { UseCaseFactory } from "#src/factories/use-case-factory.ts";
 
 export async function getPreferences(_request: FastifyRequest, reply: FastifyReply) {
   try {
     // Reutilizar o use case de categorias para mostrar todas as preferências disponíveis
-    const categoriesRepository = new PrismaCategoriesRepository();
-    const getCategoriesUseCase = new GetCategoriesUseCase(categoriesRepository);
+    const getCategoriesUseCase = UseCaseFactory.createGetCategoriesUseCase();
 
     const result = await getCategoriesUseCase.execute();
 

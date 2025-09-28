@@ -1,7 +1,6 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
-import { SearchNewsUseCase } from "#src/use-cases/list_news.ts";
-import { PrismaNewsRepository } from "#src/repositories/prisma/prisma_news_repository.ts";
+import { UseCaseFactory } from "#src/factories/use-case-factory.ts";
 
 // Schema para validar query parameters
 const searchNewsQuerySchema = z.object({
@@ -15,10 +14,8 @@ export async function searchNews(request: FastifyRequest, reply: FastifyReply) {
   try {
     // Validar query parameters
     const { page, limit, period, category } = searchNewsQuerySchema.parse(request.query);
-
-    // Instanciar repositório e use case
-    const newsRepository = new PrismaNewsRepository();
-    const searchNewsUseCase = new SearchNewsUseCase(newsRepository);
+    
+    const searchNewsUseCase = UseCaseFactory.createSearchNewsUseCase();
 
     // Executar use case
     const result = await searchNewsUseCase.execute({

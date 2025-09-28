@@ -1,6 +1,5 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
-import { GetUserPreferencesUseCase } from "#src/use-cases/get_user_preferences.ts";
-import { PrismaUsersRepository } from "#src/repositories/prisma/prisma_users_repository.ts";
+import { UseCaseFactory } from "#src/factories/use-case-factory.ts";
 
 export async function getUserPreferences(request: FastifyRequest, reply: FastifyReply) {
   try {
@@ -13,8 +12,7 @@ export async function getUserPreferences(request: FastifyRequest, reply: Fastify
       });
     }
 
-    const usersRepository = new PrismaUsersRepository();
-    const getUserPreferencesUseCase = new GetUserPreferencesUseCase(usersRepository);
+    const getUserPreferencesUseCase = UseCaseFactory.createGetUserPreferencesUseCase();
 
     const result = await getUserPreferencesUseCase.execute(userId);
 

@@ -1,8 +1,6 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
-import { UpdateUserPreferencesUseCase } from "#src/use-cases/update_user_preferences.ts";
-import { PrismaUsersRepository } from "#src/repositories/prisma/prisma_users_repository.ts";
-import { PrismaCategoriesRepository } from "#src/repositories/prisma/prisma_categories_repository.ts";
+import { UseCaseFactory } from "#src/factories/use-case-factory.ts";
 
 const updatePreferencesBodySchema = z.object({
   categoryIds: z.array(z.number().int().positive()).min(0).max(50) // Máximo de 50 categorias
@@ -21,12 +19,7 @@ export async function updateUserPreferences(request: FastifyRequest, reply: Fast
 
     const { categoryIds } = updatePreferencesBodySchema.parse(request.body);
 
-    const usersRepository = new PrismaUsersRepository();
-    const categoriesRepository = new PrismaCategoriesRepository();
-    const updateUserPreferencesUseCase = new UpdateUserPreferencesUseCase(
-      usersRepository, 
-      categoriesRepository
-    );
+    const updateUserPreferencesUseCase = UseCaseFactory.createUpdateUserPreferencesUseCase();
 
     const result = await updateUserPreferencesUseCase.execute({
       userId,
