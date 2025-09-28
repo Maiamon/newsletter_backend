@@ -36,6 +36,7 @@
     "test:ui": "vitest --ui"
   },
   "dependencies": {
+    "@fastify/cors": "11.1.0",
     "@prisma/client": "6.16.2",
     "bcryptjs": "3.0.2",
     "dotenv": "17.2.2",
@@ -59,6 +60,7 @@
     "tsx": "4.20.5",
     "typescript": "5.9.2",
     "typescript-eslint": "8.44.0",
+    "vite-tsconfig-paths": "5.1.4",
     "vitest": "3.2.4"
   }
 }

@@ -24,20 +24,35 @@ O backend de um Newsletter inteligente
 
 ### Backend que serve as notícias
 
+## API Endpoints
 
+### Autenticação (Públicas)
+- `POST /auth/register` - Registro de novo usuário
+- `POST /auth/login` - Login de usuário (retorna JWT)
+
+### Notícias (Protegidas - requer JWT)
+- `GET /news` - Buscar notícias com paginação e filtros
+- `GET /news/:id` - Obter detalhes de uma notícia específica
+
+### Categorias (Protegidas - requer JWT)
+- `GET /categories` - Buscar todas as categorias disponíveis
+
+### Autenticação JWT
+Todas as rotas protegidas requerem o header:
+```
+Authorization: Bearer <seu_jwt_token>
+```
 
 ### COMANDOS
 
-npm run dev #rodar a aplicação
+npm run dev # rodar a aplicação
+npm run test # executar testes
+npm run build # build para produção
 
-npx prisma studio
+npx prisma studio # interface visual do banco
+npx prisma migrate dev # aplicar migrações
+npx prisma generate # gerar cliente Prisma
+npx prisma db seed # popular banco com dados de teste
+npx prisma migrate reset # reset completo do banco
 
-docker compose up -d
-
-npx prisma migrate
-
-npx prisma generate
-
-npx prisma db seed
-
-npx prisma migrate reset
+docker compose up -d # subir banco PostgreSQL

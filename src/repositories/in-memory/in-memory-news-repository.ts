@@ -1,8 +1,9 @@
-import { NewsRepository, SearchNewsParams, NewsList } from "../news_repository.ts";
+import { NewsRepository, SearchNewsParams, NewsList, Category } from "../news_repository.ts";
 import { News } from "../../entities/news_entity.ts";
 
 export class InMemoryNewsRepository implements NewsRepository {
   public items: News[] = [];
+  public categories: Category[] = [];
   private currentId = 1;
   async findById(id: number): Promise<News | null> {
     const news = this.items.find(item => item.id === id);
@@ -78,5 +79,20 @@ export class InMemoryNewsRepository implements NewsRepository {
 
     this.items.push(news);
     return news;
+  }
+
+  async findAllCategories(): Promise<Category[]> {
+    // Retornar categorias ordenadas por nome
+    return [...this.categories].sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  // Método auxiliar para adicionar categorias nos testes
+  addCategory(category: Category): void {
+    const existingIndex = this.categories.findIndex(c => c.id === category.id);
+    if (existingIndex >= 0) {
+      this.categories[existingIndex] = category;
+    } else {
+      this.categories.push(category);
+    }
   }
 }

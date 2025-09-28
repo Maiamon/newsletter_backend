@@ -1,6 +1,6 @@
 import { prisma } from "#lib/prisma.ts";
 import { News } from "../../entities/news_entity.ts";
-import { NewsRepository, SearchNewsParams, NewsList } from "../news_repository.ts";
+import { NewsRepository, SearchNewsParams, NewsList, Category } from "../news_repository.ts";
 
 export class PrismaNewsRepository implements NewsRepository {
   async findById(id: number): Promise<News | null> {
@@ -129,5 +129,18 @@ export class PrismaNewsRepository implements NewsRepository {
       })),
       totalCount
     };
+  }
+
+  async findAllCategories(): Promise<Category[]> {
+    const categories = await prisma.category.findMany({
+      orderBy: {
+        name: 'asc'
+      }
+    });
+
+    return categories.map(category => ({
+      id: category.id,
+      name: category.name
+    }));
   }
 }
