@@ -31,9 +31,15 @@ describe('Authenticate Use Case', () => {
       password,
     });
 
-    // Assert - Verificar se retornou um token
+    // Assert - Verificar se retornou token e dados do usuário
     expect(result).toEqual({
       token: expect.any(String),
+      user: {
+        id: expect.any(String),
+        name: 'John Doe',
+        email: 'john.doe@example.com',
+        createdAt: expect.any(Date)
+      }
     });
     expect(result.token).toBeTruthy();
     expect(result.token.length).toBeGreaterThan(0);

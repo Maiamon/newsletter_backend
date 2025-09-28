@@ -14,12 +14,12 @@ export async function authenticateUser(request: FastifyRequest, reply: FastifyRe
   try {
     const authenticateUseCase = UseCaseFactory.createAuthenticateUseCase();
 
-    const { token } = await authenticateUseCase.execute({
+    const { token, user } = await authenticateUseCase.execute({
       email,
       password
     });
 
-    return reply.status(200).send({ token });
+    return reply.status(200).send({ token, user });
   } catch (err) {
     if (err instanceof InvalidCredentialsError) {
       return reply.status(401).send({ message: err.message });

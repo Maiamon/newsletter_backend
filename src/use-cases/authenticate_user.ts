@@ -10,6 +10,12 @@ interface AuthenticateUseCaseParams {
 
 interface AuthenticateUseCaseResult {
   token: string;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    createdAt: Date;
+  };
 }
 
 export class AuthenticateUseCase {
@@ -36,6 +42,14 @@ export class AuthenticateUseCase {
       email: user.email
     });
 
-    return { token };
+    return { 
+      token,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        createdAt: user.createdAt
+      }
+    };
   }
 }
