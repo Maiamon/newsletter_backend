@@ -6,6 +6,51 @@ import { env } from "./env";
 
 export const app = fastify();
 
+// Configuração do Swagger
+await app.register(import('@fastify/swagger'), {
+  swagger: {
+    info: {
+      title: 'Newsletter Backend API',
+      description: 'API para sistema de newsletter com autenticação JWT, categorias e preferências de usuário',
+      version: '1.0.0',
+    },
+    host: 'localhost:3333',
+    schemes: ['http'],
+    consumes: ['application/json'],
+    produces: ['application/json'],
+    securityDefinitions: {
+      bearerAuth: {
+        type: 'apiKey',
+        name: 'Authorization',
+        in: 'header',
+        description: 'JWT token. Formato: Bearer <token>',
+      },
+    },
+    tags: [
+      { name: 'Autenticação', description: 'Endpoints de registro e login' },
+      { name: 'Notícias', description: 'Endpoints para buscar e visualizar notícias' },
+      { name: 'Categorias', description: 'Endpoints para listar categorias' },
+      { name: 'Preferências', description: 'Endpoints para gerenciar preferências do usuário' },
+      { name: 'Perfil', description: 'Endpoints para gerenciar perfil do usuário' },
+    ],
+  },
+});
+
+// Configuração do Swagger UI
+await app.register(import('@fastify/swagger-ui'), {
+  routePrefix: '/docs',
+  uiConfig: {
+    docExpansion: 'full',
+    deepLinking: false,
+  },
+  staticCSP: true,
+  transformStaticCSP: (header) => header,
+  transformSpecification: (swaggerObject) => {
+    return swaggerObject;
+  },
+  transformSpecificationClone: true,
+});
+
 app.register(appRoutes);
 
 await app.register(fastifyCors, {
