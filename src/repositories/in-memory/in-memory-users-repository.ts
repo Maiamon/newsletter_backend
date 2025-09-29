@@ -39,13 +39,13 @@ export class InMemoryUsersRepository implements UsersRepository {
   async getUserPreferences(userId: string): Promise<Category[]> {
     const categoryIds = this.userPreferences.get(userId) || [];
     
-    // Simulando busca das categorias (em um cenário real, você teria acesso ao repositório de categorias)
-    // Por simplicidade, vou retornar categorias mock baseadas nos IDs
+    // Simulando busca das categorias (usando as mesmas do repositório de categorias)
     const mockCategories: Category[] = [
       { id: 1, name: 'Technology' },
       { id: 2, name: 'Sports' },
-      { id: 3, name: 'Business' },
-      { id: 4, name: 'Entertainment' }
+      { id: 3, name: 'Politics' },
+      { id: 4, name: 'Entertainment' },
+      { id: 5, name: 'Science' }
     ];
 
     return mockCategories
@@ -55,6 +55,16 @@ export class InMemoryUsersRepository implements UsersRepository {
 
   async updateUserPreferences(userId: string, categoryIds: number[]): Promise<void> {
     this.userPreferences.set(userId, [...categoryIds]);
+  }
+
+  async updateUserName(userId: string, name: string): Promise<void> {
+    const userIndex = this.items.findIndex(user => user.id === userId);
+    if (userIndex >= 0) {
+      this.items[userIndex] = {
+        ...this.items[userIndex],
+        name
+      };
+    }
   }
 
 }

@@ -13,4 +13,5 @@ export interface UsersRepository {
   create(data: CreateUserData): Promise<User>;
   getUserPreferences(userId: string): Promise<Category[]>;
   updateUserPreferences(userId: string, categoryIds: number[]): Promise<void>;
+  updateUserName(userId: string, name: string): Promise<void>;
 }

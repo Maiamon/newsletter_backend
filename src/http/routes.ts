@@ -7,6 +7,8 @@ import { getCategories } from "./controllers/get_categories.controller";
 import { getPreferences } from "./controllers/get_preferences.controller";
 import { getUserPreferences } from "./controllers/get_user_preferences.controller";
 import { updateUserPreferences } from "./controllers/update_user_preferences.controller";
+import { getUserProfile } from "./controllers/get_user_profile.controller";
+import { updateUserProfile } from "./controllers/update_user_profile.controller";
 import { authMiddleware } from "./middlewares/auth.middleware";
 
 export async function appRoutes(app: FastifyInstance) {
@@ -52,12 +54,14 @@ export async function appRoutes(app: FastifyInstance) {
   app.put('/users/me/preferences', { preHandler: authMiddleware }, updateUserPreferences);
   
   // ========================================
-  // ROTAS FUTURAS (para implementar)
+  // ROTAS DE PERFIL DO USUÁRIO (protegidas)
   // ========================================
   
-  // TODO: Implementar rotas de perfil do usuário
-  // app.get('/user/profile', { preHandler: authMiddleware }, getUserProfile);
-  // app.put('/user/profile', { preHandler: authMiddleware }, updateUserProfile);
+  // Obter perfil completo do usuário (dados + preferências)
+  app.get('/user/profile', { preHandler: authMiddleware }, getUserProfile);
+  
+  // Atualizar perfil do usuário (nome)
+  app.put('/user/profile', { preHandler: authMiddleware }, updateUserProfile);
 
 }
 

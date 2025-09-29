@@ -39,7 +39,7 @@ describe("Update User Preferences Use Case", () => {
     expect(preferences).toHaveLength(3);
     expect(preferences).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ name: "Business" }),
+        expect.objectContaining({ name: "Politics" }),
         expect.objectContaining({ name: "Sports" }),
         expect.objectContaining({ name: "Technology" })
       ])
@@ -63,7 +63,7 @@ describe("Update User Preferences Use Case", () => {
     expect(preferences).toHaveLength(2);
     expect(preferences).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ name: "Business" }),
+        expect.objectContaining({ name: "Politics" }),
         expect.objectContaining({ name: "Entertainment" })
       ])
     );
